@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Timeless Wisdom Library</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <header class="p-6 bg-indigo-700 text-white shadow-lg">
+    <h1 class="text-3xl font-bold">The Timeless Wisdom Library</h1>
+    <p class="mt-2 text-sm">Curated wisdom from philosophers, scientists, artists, leaders, and visionaries across time.</p>
+  </header>
+  <main class="p-6 max-w-4xl mx-auto">
+    <div class="mb-6">
+      <input id="search" type="text" placeholder="Search wisdom..." class="w-full p-2 rounded border border-gray-300" />
+    </div>
+    <div class="grid gap-4" id="wisdom"></div>
+  </main>
+
+  <script>
+    const DATA = [
+      { text: "The unexamined life is not worth living.", author: "Socrates", field: "Philosophy", era: "Classical" },
+      { text: "I think, therefore I am.", author: "René Descartes", field: "Philosophy", era: "Renaissance" },
+      { text: "Imagination is more important than knowledge.", author: "Albert Einstein", field: "Science", era: "Modern" },
+      { text: "Not everything that is faced can be changed, but nothing can be changed until it is faced.", author: "James Baldwin", field: "Literature", era: "Modern" },
+      { text: "An investment in knowledge pays the best interest.", author: "Benjamin Franklin", field: "Politics", era: "Enlightenment" },
+      { text: "Happiness depends upon ourselves.", author: "Aristotle", field: "Philosophy", era: "Classical" }
+    ];
+
+    const container = document.getElementById('wisdom');
+    const searchInput = document.getElementById('search');
+
+    function renderWisdom(items) {
+      container.innerHTML = "";
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "p-4 bg-white shadow rounded";
+        div.innerHTML = `
+          <p class="italic text-lg">"${item.text}"</p>
+          <p class="text-right mt-2">- ${item.author}</p>
+          <p class="text-sm text-gray-500 mt-1">${item.field}, ${item.era}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterWisdom() {
+      const q = searchInput.value.toLowerCase();
+      const filtered = DATA.filter(item =>
+        item.text.toLowerCase().includes(q) ||
+        item.author.toLowerCase().includes(q) ||
+        item.field.toLowerCase().includes(q) ||
+        item.era.toLowerCase().includes(q)
+      );
+      renderWisdom(filtered);
+    }
+
+    searchInput.addEventListener('input', filterWisdom);
+
+    // Initial render
+    renderWisdom(DATA);
+  </script>
+</body>
+</html>
