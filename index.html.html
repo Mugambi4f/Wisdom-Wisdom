@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Timeless Wisdom Library</title>
+  <meta name="description" content="A curated, searchable treasury of enduring wisdom from thinkers across civilizations and centuries—philosophers, scientists, artists, spiritual teachers, leaders, and more." />
+  <meta property="og:title" content="The Timeless Wisdom Library" />
+  <meta property="og:description" content="A curated, searchable treasury of enduring wisdom from thinkers across civilizations and centuries." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='24' fill='%230ea5e9'/%3E%3Ctext x='50%25' y='58%25' dominant-baseline='middle' text-anchor='middle' font-size='86' fill='white'%3E%E2%9C%93%3C/text%3E%3Ctext x='50%25' y='105' dominant-baseline='middle' text-anchor='middle' font-size='28' fill='white'%3Ewisdom%3C/text%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Hide scrollbars on quote body for clean cards */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 selection:bg-sky-200/60 selection:text-slate-900">
+  <header class="sticky top-0 z-30 backdrop-blur bg-white/70 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-500 text-white shadow-sm">☼</div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-semibold tracking-tight">The Timeless Wisdom Library</h1>
+          <p class="text-sm text-slate-600 -mt-0.5">A searchable treasury of ideas that outlive trends.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-slate-500">
+        <button id="randomBtn" class="rounded-xl bg-slate-900 text-white px-3 py-2 hover:bg-slate-700 transition">🎲 Random</button>
+        <button id="shuffleBtn" class="rounded-xl bg-white border px-3 py-2 hover:bg-slate-50 transition">🔀 Shuffle</button>
+        <button id="favoritesToggle" class="rounded-xl bg-white border px-3 py-2 hover:bg-slate-50 transition" title="Show only favorites">⭐ Favorites</button>
+        <button id="exportBtn" class="rounded-xl bg-white border px-3 py-2 hover:bg-slate-50 transition">⬇️ Export</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+    <!-- Controls -->
+    <section class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-3">
+      <div class="md:col-span-5">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="search">Search</label>
+        <input id="search" type="search" placeholder="Find wisdom by text, author, region, or source…" class="w-full rounded-2xl border-slate-200 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 px-4 py-2.5 bg-white shadow-sm"/>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="field">Field</label>
+        <select id="field" class="w-full rounded-2xl border-slate-200 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 px-3 py-2.5 bg-white shadow-sm"></select>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="era">Era</label>
+        <select id="era" class="w-full rounded-2xl border-slate-200 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 px-3 py-2.5 bg-white shadow-sm"></select>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="region">Region</label>
+        <select id="region" class="w-full rounded-2xl border-slate-200 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 px-3 py-2.5 bg-white shadow-sm"></select>
+      </div>
+      <div class="md:col-span-1">
+        <label class="block text-sm font-medium text-slate-700 mb-1" for="type">Type</label>
+        <select id="type" class="w-full rounded-2xl border-slate-200 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 px-3 py-2.5 bg-white shadow-sm"></select>
+      </div>
+    </section>
+
+    <section class="mt-4 flex items-center justify-between text-sm text-slate-600">
+      <div id="count">0 entries</div>
+      <div class="flex items-center gap-3">
+        <label class="inline-flex items-center gap-2 cursor-pointer select-none"><input id="compactToggle" type="checkbox" class="rounded"/> Compact view</label>
+        <label class="inline-flex items-center gap-2 cursor-pointer select-none"><input id="notesToggle" type="checkbox" class="rounded"/> Show notes</label>
+      </div>
+    </section>
+
+    <!-- Results grid -->
+    <section id="grid" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></section>
+
+    <!-- About -->
+    <section class="mt-16 prose prose-slate max-w-none">
+      <h2 class="text-slate-800">About & How to Contribute</h2>
+      <p>
+        <strong>The Timeless Wisdom Library</strong> is a living, growing collection of short quotes, principles, and proverbs from many civilizations and disciplines. Most texts here are paraphrases or public‑domain quotes. Attributions are provided where clear; some widely shared sayings have uncertain origins and are marked accordingly.
+      </p>
+      <ul>
+        <li><strong>Open data:</strong> Everything on this page can be reused. Consider the content under <em>CC0</em> (public domain).</li>
+        <li><strong>Local favorites:</strong> Click ⭐ to save entries to your device. Use ⬇️ Export to download them as JSON.</li>
+        <li><strong>Add entries:</strong> Click <em>“+ Add your own”</em> below to draft entries (stored only in your browser). To make them permanent for everyone, edit the data block in the page’s source and publish.</li>
+      </ul>
+      <details class="mt-6">
+        <summary class="cursor-pointer text-slate-800">+ Add your own (local only)</summary>
+        <form id="addForm" class="mt-4 grid grid-cols-1 md:grid-cols-6 gap-3">
+          <input class="md:col-span-6 rounded-xl border px-3 py-2" placeholder="Wisdom text (quote, principle, or proverb)" id="f_text" required>
+          <input class="md:col-span-3 rounded-xl border px-3 py-2" placeholder="Author or Source (e.g., Confucius, African proverb)" id="f_author" required>
+          <input class="md:col-span-1 rounded-xl border px-3 py-2" placeholder="Era (e.g., Ancient, Medieval)" id="f_era">
+          <input class="md:col-span-2 rounded-xl border px-3 py-2" placeholder="Region (e.g., Greece, China)" id="f_region">
+          <input class="md:col-span-3 rounded-xl border px-3 py-2" placeholder="Field(s) comma‑separated (e.g., Philosophy, Ethics)" id="f_field">
+          <select class="md:col-span-1 rounded-xl border px-3 py-2" id="f_type">
+            <option value="quote" selected>quote</option>
+            <option value="principle">principle</option>
+            <option value="proverb">proverb</option>
+          </select>
+          <input class="md:col-span-3 rounded-xl border px-3 py-2" placeholder="Work / Source (optional)" id="f_source">
+          <input class="md:col-span-3 rounded-xl border px-3 py-2" placeholder="Note (optional attribution, uncertainty, etc.)" id="f_note">
+          <button class="md:col-span-6 rounded-xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-500">Add locally</button>
+        </form>
+      </details>
+    </section>
+
+    <footer class="mt-16 border-t pt-6 text-sm text-slate-500 flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
+      <p>Made with ❤️ for seekers of wisdom. Data is libre (CC0). No tracking.</p>
+      <p>Want to help? Edit this page on GitHub once you publish it.</p>
+    </footer>
+  </main>
+
+  <script>
+    // --------------------
+    // Data
+    // --------------------
+    // Each entry: { text, author, era, region, field:[...], type, source?, note?, birth?, death? }
+    const DATA = [
+      // ——— Ancient & Classical ———
+      {text: "The unexamined life is not worth living.", author: "Socrates", era:"Classical", region:"Greece", field:["Philosophy","Ethics"], type:"quote", source:"Apology"},
+      {text: "Cultivate virtue by practicing it until it becomes habit.", author: "Aristotle", era:"Classical", region:"Greece", field:["Philosophy","Ethics"], type:"principle", source:"Nicomachean Ethics", note:"Paraphrase"},
+      {text: "We suffer more often in imagination than in reality.", author: "Seneca", era:"Classical", region:"Rome", field:["Philosophy","Stoicism"], type:"quote", source:"Letters"},
+      {text: "You have power over your mind—not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius", era:"Classical", region:"Rome", field:["Philosophy","Stoicism"], type:"quote", source:"Meditations"},
+      {text: "Some things are up to us and some are not. Focus on what is within your control.", author: "Epictetus", era:"Classical", region:"Greece / Rome", field:["Philosophy","Stoicism"], type:"principle", source:"Enchiridion", note:"Paraphrase"},
+      {text: "No man ever steps in the same river twice.", author: "Heraclitus", era:"Classical", region:"Greece", field:["Philosophy","Metaphysics"], type:"quote"},
+      {text: "Know yourself.", author: "Delphic maxim", era:"Classical", region:"Greece", field:["Philosophy","Ethics"], type:"proverb"},
+      {text: "To see the truth, let go of striving and soften your will.", author: "Laozi", era:"Ancient", region:"China", field:["Philosophy","Taoism"], type:"principle", source:"Daodejing", note:"Paraphrase"},
+      {text: "A journey of a thousand miles begins beneath one’s feet.", author: "Laozi", era:"Ancient", region:"China", field:["Philosophy","Taoism"], type:"quote", source:"Daodejing"},
+      {text: "Cultivate humanity through ritual, respect, and right conduct.", author: "Confucius", era:"Ancient", region:"China", field:["Philosophy","Ethics"], type:"principle", source:"Analects", note:"Paraphrase"},
+      {text: "Know the enemy and know yourself; in a hundred battles you will never be in peril.", author: "Sun Tzu", era:"Ancient", region:"China", field:["Strategy","Leadership"], type:"quote", source:"The Art of War"},
+      {text: "Hatred is never ended by hatred; by non‑hatred alone is hatred ended.", author: "Buddha", era:"Ancient", region:"India", field:["Spirituality","Ethics"], type:"quote", source:"Dhammapada"},
+      {text: "Nonviolence and truth are the highest vows.", author: "Mahavira", era:"Ancient", region:"India", field:["Spirituality","Ethics"], type:"principle", note:"Paraphrase"},
+      {text: "Favor the poor and the weak; be just and do not move the boundary stone of the widow.", author: "Instruction of Amenemope", era:"Ancient", region:"Egypt", field:["Ethics","Civics"], type:"principle", note:"Paraphrase"},
+      {text: "Good speech is rarer than emeralds, yet it may be found among the maidservants at the grindstone.", author: "Instruction of Ptahhotep", era:"Ancient", region:"Egypt", field:["Ethics","Conduct"], type:"quote"},
+      {text: "Give me a place to stand and a lever long enough, and I will move the world.", author: "Archimedes", era:"Classical", region:"Greece", field:["Science","Mathematics"], type:"quote"},
+      {text: "First, do no harm.", author: "Hippocratic tradition", era:"Classical", region:"Greece", field:["Medicine","Ethics"], type:"principle", note:"Paraphrase of non‑maleficence"},
+      {text: "The butterfly dream reminds us: the line between dream and waking self is thin.", author: "Zhuangzi", era:"Ancient", region:"China", field:["Philosophy"], type:"principle", note:"Paraphrase of Zhuangzi’s dream"},
+      {text: "He who conquers himself is the mightiest warrior.", author: "Confucian tradition", era:"Ancient", region:"China", field:["Ethics","Self‑mastery"], type:"proverb"},
+
+      // ——— Medieval ———
+      {text: "Our hearts are restless until they rest in the Good.", author: "Augustine", era:"Medieval", region:"North Africa", field:["Theology","Philosophy"], type:"principle", source:"Confessions", note:"Paraphrase"},
+      {text: "Doubt is the key to knowledge: test, observe, and reason from evidence.", author: "Ibn al‑Haytham (Alhazen)", era:"Medieval", region:"Arab world", field:["Science","Method"], type:"principle", note:"Paraphrase"},
+      {text: "Beware the ego’s subtlety; sincerity purifies the heart.", author: "Al‑Ghazali", era:"Medieval", region:"Persia", field:["Spirituality","Ethics"], type:"principle", note:"Paraphrase"},
+      {text: "The highest charity is to make someone self‑reliant.", author: "Maimonides", era:"Medieval", region:"Spain / Egypt", field:["Ethics","Civics"], type:"principle", note:"Paraphrase of charity ladder"},
+      {text: "Truth cannot contradict truth; reason and faith are friends when rightly understood.", author: "Thomas Aquinas", era:"Medieval", region:"Italy", field:["Theology","Philosophy"], type:"principle", note:"Paraphrase"},
+      {text: "What you seek is seeking you.", author: "Rumi", era:"Medieval", region:"Persia", field:["Poetry","Spirituality"], type:"quote"},
+
+      // ——— Renaissance & Early Modern ———
+      {text: "It is better to be both loved and feared; lacking both, choose to be feared rather than despised.", author: "Niccolò Machiavelli", era:"Renaissance", region:"Italy", field:["Politics","Leadership"], type:"principle", source:"The Prince", note:"Paraphrase"},
+      {text: "Que sais‑je?—What do I know? Make friends with uncertainty.", author: "Montaigne", era:"Renaissance", region:"France", field:["Philosophy","Skepticism"], type:"principle"},
+      {text: "Let observation test theory; the earth is not the center because measurements say so.", author: "Galileo Galilei", era:"Early Modern", region:"Italy", field:["Science","Method"], type:"principle", note:"Paraphrase"},
+      {text: "Nature speaks mathematics.", author: "Johannes Kepler", era:"Early Modern", region:"Germany", field:["Science","Mathematics"], type:"principle", note:"Paraphrase"},
+      {text: "Knowledge is power—organized curiosity becomes technology.", author: "Francis Bacon", era:"Early Modern", region:"England", field:["Science","Method"], type:"principle", note:"Paraphrase"},
+      {text: "I will doubt whatever can be doubted, to find what cannot.", author: "René Descartes", era:"Early Modern", region:"France", field:["Philosophy","Epistemology"], type:"principle", source:"Meditations", note:"Paraphrase of methodic doubt"},
+      {text: "The heart has reasons that reason does not know.", author: "Blaise Pascal", era:"Early Modern", region:"France", field:["Philosophy","Theology"], type:"quote"},
+      {text: "Freedom is understanding necessity.", author: "Baruch Spinoza", era:"Early Modern", region:"Netherlands", field:["Philosophy","Ethics"], type:"quote"},
+      {text: "If I have seen further it is by standing on the shoulders of giants.", author: "Isaac Newton", era:"Early Modern", region:"England", field:["Science","Mathematics"], type:"quote"},
+      {text: "People are born with natural rights to life, liberty, and property.", author: "John Locke", era:"Early Modern", region:"England", field:["Politics","Law"], type:"principle", note:"Paraphrase"},
+      {text: "Reason is—and ought only to be—the slave of the passions.", author: "David Hume", era:"Enlightenment", region:"Scotland", field:["Philosophy","Ethics"], type:"quote"},
+      {text: "Man is born free, and everywhere he is in chains.", author: "Jean‑Jacques Rousseau", era:"Enlightenment", region:"France", field:["Politics","Education"], type:"quote"},
+      {text: "Act only on that maxim whereby you can at the same time will that it should become a universal law.", author: "Immanuel Kant", era:"Enlightenment", region:"Prussia", field:["Philosophy","Ethics"], type:"quote", source:"Groundwork"},
+      {text: "The impartial spectator within us disciplines selfishness into sympathy.", author: "Adam Smith", era:"Enlightenment", region:"Scotland", field:["Economics","Ethics"], type:"principle", note:"Paraphrase"},
+
+      // ——— 19th Century ———
+      {text: "Happiness is the only thing desirable as an end; harm no one’s liberty.", author: "John Stuart Mill", era:"19th Century", region:"England", field:["Philosophy","Law"], type:"principle", source:"On Liberty", note:"Paraphrase of harm principle"},
+      {text: "The world is my representation; compassion curbs the will’s cruelty.", author: "Arthur Schopenhauer", era:"19th Century", region:"Germany", field:["Philosophy","Ethics"], type:"principle", note:"Paraphrase"},
+      {text: "Anxiety is the dizziness of freedom.", author: "Søren Kierkegaard", era:"19th Century", region:"Denmark", field:["Philosophy","Existentialism"], type:"quote"},
+      {text: "Become who you are; love your fate.", author: "Friedrich Nietzsche", era:"19th Century", region:"Germany", field:["Philosophy"], type:"principle", note:"Paraphrase of ‘amor fati’"},
+      {text: "Ignorance more frequently begets confidence than does knowledge.", author: "Charles Darwin", era:"19th Century", region:"England", field:["Science"], type:"quote"},
+      {text: "Power concedes nothing without a demand.", author: "Frederick Douglass", era:"19th Century", region:"United States", field:["Civics","Justice"], type:"quote"},
+      {text: "With malice toward none, with charity for all.", author: "Abraham Lincoln", era:"19th Century", region:"United States", field:["Politics","Civics"], type:"quote"},
+      {text: "Nursing is a calling to improve sanitary conditions and save lives by careful measurement.", author: "Florence Nightingale", era:"19th Century", region:"England", field:["Medicine","Statistics"], type:"principle", note:"Paraphrase"},
+      {text: "The philosophers have only interpreted the world; the point is to change it.", author: "Karl Marx", era:"19th Century", region:"Germany", field:["Politics","Philosophy"], type:"quote"},
+      {text: "Creativity is selection: the mind chooses the useful combinations.", author: "Henri Poincaré", era:"19th Century", region:"France", field:["Mathematics","Creativity"], type:"principle", note:"Paraphrase"},
+      {text: "The degree of civilization in a society can be judged by entering its prisons.", author: "Fyodor Dostoevsky", era:"19th Century", region:"Russia", field:["Literature","Justice"], type:"quote"},
+      {text: "To live honestly, seek simplicity, repentance, and love.", author: "Leo Tolstoy", era:"19th Century", region:"Russia", field:["Ethics","Spirituality"], type:"principle", note:"Paraphrase"},
+
+      // ——— 20th Century ———
+      {text: "Make things as simple as possible, but not simpler.", author: "Albert Einstein", era:"20th Century", region:"Germany / United States", field:["Science","Clarity"], type:"quote"},
+      {text: "Nothing in life is to be feared; it is only to be understood.", author: "Marie Curie", era:"20th Century", region:"Poland / France", field:["Science"], type:"quote"},
+      {text: "The first principle is that you must not fool yourself—and you are the easiest person to fool.", author: "Richard Feynman", era:"20th Century", region:"United States", field:["Science","Method"], type:"quote"},
+      {text: "We can only see a short distance ahead, but we can see plenty there that needs to be done.", author: "Alan Turing", era:"20th Century", region:"England", field:["Mathematics","Computing"], type:"quote"},
+      {text: "The banality of evil: great crimes can arise from ordinary obedience without thought.", author: "Hannah Arendt", era:"20th Century", region:"Germany / United States", field:["Politics","Ethics"], type:"principle", note:"Paraphrase"},
+      {text: "One is not born, but rather becomes, a woman.", author: "Simone de Beauvoir", era:"20th Century", region:"France", field:["Philosophy","Feminism"], type:"quote"},
+      {text: "The cosmos is within us; we are a way for the universe to know itself.", author: "Carl Sagan", era:"20th Century", region:"United States", field:["Science","Wonder"], type:"quote"},
+      {text: "Injustice anywhere is a threat to justice everywhere.", author: "Martin Luther King Jr.", era:"20th Century", region:"United States", field:["Civics","Justice"], type:"quote"},
+      {text: "It always seems impossible until it’s done.", author: "Nelson Mandela (attributed)", era:"20th Century", region:"South Africa", field:["Leadership","Perseverance"], type:"quote", note:"Popular attribution"},
+      {text: "It is the little things citizens do that will make a difference.", author: "Wangari Maathai", era:"20th Century", region:"Kenya", field:["Environment","Civics"], type:"quote"},
+      {text: "Information is the resolution of uncertainty.", author: "Claude Shannon", era:"20th Century", region:"United States", field:["Mathematics","Communication"], type:"principle", note:"Paraphrase"},
+      {text: "The commons can be governed by communities when rules are well‑matched to local conditions.", author: "Elinor Ostrom", era:"20th Century", region:"United States", field:["Economics","Civics"], type:"principle", note:"Paraphrase"},
+      {text: "You cannot change people—only the system in which they work.", author: "W. Edwards Deming", era:"20th Century", region:"United States", field:["Management","Systems"], type:"principle"},
+      {text: "Stay hungry. Stay foolish.", author: "Steve Jobs", era:"21st Century", region:"United States", field:["Creativity","Entrepreneurship"], type:"quote"},
+
+      // ——— Poets, Artists, Writers ———
+      {text: "To be, or not to be: to question is to be human.", author: "William Shakespeare", era:"Early Modern", region:"England", field:["Literature"], type:"quote"},
+      {text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci (attributed)", era:"Renaissance", region:"Italy", field:["Art","Design"], type:"quote", note:"Popular attribution"},
+      {text: "Art washes away from the soul the dust of everyday life.", author: "Pablo Picasso", era:"20th Century", region:"Spain", field:["Art","Creativity"], type:"quote"},
+      {text: "If you want to tell people the truth, make them laugh, otherwise they’ll kill you.", author: "Oscar Wilde", era:"19th Century", region:"Ireland", field:["Literature","Wit"], type:"quote"},
+      {text: "The only journey is the one within.", author: "Rainer Maria Rilke", era:"20th Century", region:"Bohemia / Austria", field:["Poetry","Spirituality"], type:"quote"},
+      {text: "You are what you do, not what you say you’ll do.", author: "Carl Jung (attributed)", era:"20th Century", region:"Switzerland", field:["Psychology"], type:"quote", note:"Popular attribution"},
+
+      // ——— Global Proverbs & Sayings ———
+      {text: "This too shall pass.", author: "Persian proverb", era:"Ancient", region:"Persia", field:["Resilience"], type:"proverb"},
+      {text: "Trust in God, but tie your camel.", author: "Arabic proverb", era:"Medieval", region:"Arab world", field:["Prudence"], type:"proverb"},
+      {text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese proverb", era:"Ancient", region:"China", field:["Patience","Action"], type:"proverb"},
+      {text: "Fall seven times, stand up eight.", author: "Japanese proverb", era:"Medieval", region:"Japan", field:["Resilience"], type:"proverb"},
+      {text: "Haraka haraka haina baraka (Haste has no blessing).", author: "Swahili proverb", era:"Traditional", region:"East Africa", field:["Prudence"], type:"proverb"},
+      {text: "If you want to go fast, go alone; if you want to go far, go together.", author: "African proverb (attributed)", era:"Traditional", region:"Africa", field:["Community","Leadership"], type:"proverb", note:"Popular attribution"},
+      {text: "However far a stream flows, it never forgets its source.", author: "Yorùbá proverb", era:"Traditional", region:"West Africa", field:["Gratitude","Roots"], type:"proverb"},
+      {text: "The rain does not fall on one roof alone.", author: "Akan proverb", era:"Traditional", region:"West Africa", field:["Community","Empathy"], type:"proverb"},
+
+      // ——— Religion & Spiritual Teachers ———
+      {text: "Love your neighbor as yourself.", author: "Jesus (Gospels)", era:"1st Century", region:"Levant", field:["Spirituality","Ethics"], type:"quote"},
+      {text: "God does not change the condition of a people until they change what is in themselves.", author: "Qur’anic teaching", era:"7th Century", region:"Arabia", field:["Spirituality","Ethics"], type:"quote"},
+      {text: "Compassion is the wish that others be free from suffering; wisdom sees the causes clearly.", author: "Bodhisattva ideal", era:"Ancient", region:"India / Tibet", field:["Spirituality","Ethics"], type:"principle", note:"Paraphrase"},
+
+      // ——— Scientists, Engineers, Polymaths ———
+      {text: "The book of nature is written in the language of mathematics.", author: "Galileo Galilei", era:"Early Modern", region:"Italy", field:["Science","Mathematics"], type:"quote"},
+      {text: "Poetical science: imagine machines that weave algebraic patterns.", author: "Ada Lovelace", era:"19th Century", region:"England", field:["Computing","Imagination"], type:"principle", note:"Paraphrase"},
+      {text: "One accurate measurement is worth a thousand expert opinions.", author: "Grace Hopper (attributed)", era:"20th Century", region:"United States", field:["Computing","Engineering"], type:"quote", note:"Popular attribution"},
+      {text: "The map is not the territory.", author: "Alfred Korzybski", era:"20th Century", region:"Poland / United States", field:["Semantics","Epistemology"], type:"quote"},
+      {text: "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.", author: "Antoine de Saint‑Exupéry", era:"20th Century", region:"France", field:["Design","Writing"], type:"quote"},
+
+      // ——— Civics, Leadership, Economics ———
+      {text: "The arc of the moral universe is long, but it bends toward justice.", author: "Theodore Parker → MLK Jr.", era:"19th→20th Century", region:"United States", field:["Civics","Justice"], type:"quote"},
+      {text: "Development is freedom: expand real choices people have reason to value.", author: "Amartya Sen", era:"20th Century", region:"India", field:["Economics","Civics"], type:"principle", note:"Paraphrase"},
+      {text: "Seek first to understand, then to be understood.", author: "Stephen R. Covey", era:"20th Century", region:"United States", field:["Leadership","Communication"], type:"quote"},
+      {text: "The price of greatness is responsibility.", author: "Winston Churchill", era:"20th Century", region:"United Kingdom", field:["Leadership"], type:"quote"},
+
+      // ——— Modern & General Life Lessons ———
+      {text: "Discipline equals freedom.", author: "Jocko Willink", era:"21st Century", region:"United States", field:["Leadership","Habits"], type:"quote"},
+      {text: "Attention is your scarcest resource; spend it deliberately.", author: "Modern productivity wisdom", era:"21st Century", region:"Global", field:["Productivity","Focus"], type:"principle"},
+      {text: "Be kind, for everyone you meet is fighting a hard battle.", author: "Ian Maclaren (often misattributed)", era:"20th Century", region:"Scotland", field:["Empathy"], type:"quote", note:"Popular attribution"},
+      {text: "Strong opinions, loosely held: update beliefs quickly when evidence arrives.", author: "Paul Saffo (popularized)", era:"21st Century", region:"United States", field:["Thinking","Science"], type:"principle"}
+    ];
+
+    // --------------------
+    // State & helpers
+    // --------------------
+    const $ = sel => document.querySelector(sel);
+    const grid = $('#grid');
+    const count = $('#count');
+    const search = $('#search');
+    const fieldSel = $('#field');
+    const eraSel = $('#era');
+    const regionSel = $('#region');
+    const typeSel = $('#type');
+    const compactToggle = $('#compactToggle');
+    const notesToggle = $('#notesToggle');
+    const favoritesToggle = $('#favoritesToggle');
+
+    let showFavoritesOnly = false;
+
+    const FAVORITES_KEY = 'twl_favs_v1';
+    const LOCAL_ADDITIONS_KEY = 'twl_local_additions_v1';
+
+    const getFavorites = () => new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'));
+    const setFavorites = (set) => localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(set)));
+
+    // Allow local additions via form
+    const loadLocalAdditions = () => JSON.parse(localStorage.getItem(LOCAL_ADDITIONS_KEY) || '[]');
+    const saveLocalAddition = (entry) => {
+      const all = loadLocalAdditions();
+      all.push(entry);
+      localStorage.setItem(LOCAL_ADDITIONS_KEY, JSON.stringify(all));
+    };
+
+    // Build filters from data
+    function uniqueSorted(list) { return Array.from(new Set(list)).filter(Boolean).sort((a,b)=>a.localeCompare(b)); }
+
+    function buildFilters() {
+      const allData = DATA.concat(loadLocalAdditions());
+      const fields = uniqueSorted(allData.flatMap(d => d.field || []));
+      const eras = uniqueSorted(allData.map(d => d.era));
+      const regions = uniqueSorted(allData.map(d => d.region));
+      const types = uniqueSorted(allData.map(d => d.type));
+
+      function fill(select, items, label) {
+        select.innerHTML = '';
+        const any = document.createElement('option');
+        any.value = '';
+        any.textContent = `Any ${label}`;
+        select.appendChild(any);
+        items.forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent=v; select.appendChild(o); });
+      }
+
+      fill(fieldSel, fields, 'field');
+      fill(eraSel, eras, 'era');
+      fill(regionSel, regions, 'region');
+      fill(typeSel, types, 'type');
+    }
+
+    function entryKey(e) { return `${e.author}|${e.text}`; }
+
+    function render(list) {
+      const favs = getFavorites();
+      grid.innerHTML = '';
+
+      const compact = compactToggle.checked;
+      const showNotes = notesToggle.checked;
+
+      list.forEach(e => {
+        const card = document.createElement('article');
+        card.className = `group relative rounded-2xl border bg-white shadow-sm hover:shadow-md transition overflow-hidden ${compact ? '' : 'p-4'}`;
+
+        const fav = document.createElement('button');
+        fav.className = 'absolute top-3 right-3 text-xl';
+        fav.title = 'Favorite';
+        const k = entryKey(e);
+        fav.textContent = favs.has(k) ? '⭐' : '☆';
+        fav.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          const set = getFavorites();
+          if (set.has(k)) set.delete(k); else set.add(k);
+          setFavorites(set); render(current());
+        });
+        card.appendChild(fav);
+
+        const inner = document.createElement('div');
+        inner.className = compact ? 'p-3' : '';
+
+        const quote = document.createElement('p');
+        quote.className = 'text-slate-900 text-base leading-relaxed';
+        quote.textContent = e.text;
+
+        const meta = document.createElement('div');
+        meta.className = 'mt-3 text-sm text-slate-600 flex flex-col gap-1';
+        meta.innerHTML = `
+          <div><span class="font-medium text-slate-700">${e.author}</span> · ${[e.era, e.region].filter(Boolean).join(' • ')}</div>
+          <div class="flex flex-wrap gap-1">${(e.field||[]).map(t => `<span class='rounded-full bg-slate-100 px-2 py-0.5 text-xs border'>${t}</span>`).join('')}</div>
+          ${e.source ? `<div class='italic text-slate-500'>${e.source}</div>` : ''}
+          ${showNotes && e.note ? `<div class='text-xs text-amber-700'>${e.note}</div>` : ''}
+        `;
+
+        const actions = document.createElement('div');
+        actions.className = 'mt-3 flex items-center gap-2';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'rounded-xl border px-2.5 py-1.5 text-sm hover:bg-slate-50';
+        copyBtn.textContent = 'Copy';
+        copyBtn.addEventListener('click', async (ev)=>{
+          ev.stopPropagation();
+          const text = `“${e.text}” — ${e.author}`;
+          try { await navigator.clipboard.writeText(text); copyBtn.textContent = 'Copied!'; setTimeout(()=>copyBtn.textContent='Copy',1000); } catch {}
+        });
+
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'rounded-xl border px-2.5 py-1.5 text-sm hover:bg-slate-50';
+        shareBtn.textContent = 'Share';
+        shareBtn.addEventListener('click', async (ev)=>{
+          ev.stopPropagation();
+          const text = `“${e.text}” — ${e.author}`;
+          if (navigator.share) { try { await navigator.share({title:'Timeless Wisdom', text}); } catch {} }
+          else { try { await navigator.clipboard.writeText(text); shareBtn.textContent='Copied!'; setTimeout(()=>shareBtn.textContent='Share',1000);} catch {} }
+        });
+
+        actions.append(copyBtn, shareBtn);
+        inner.append(quote, meta, actions);
+        card.appendChild(inner);
+        grid.appendChild(card);
+      });
+
+      count.textContent = `${list.length} entr${list.length===1?'y':'ies'}`;
+    }
+
+    function matches(e, q) {
+      if (!q) return true;
+      const hay = `${e.text} ${e.author} ${e.region} ${e.source||''}`.toLowerCase();
+      return q.split(/\s+/).every(tok => hay.includes(tok));
+    }
+
+    function filtered() {
+      const all = DATA.concat(loadLocalAdditions());
+      const q = search.value.trim().toLowerCase();
+      const f = fieldSel.value; const era = eraSel.value; const region = regionSel.value; const t = typeSel.value;
+      const favs = getFavorites();
+
+      return all.filter(e => (
+        (!f || (e.field||[]).includes(f)) && (!era || e.era===era) && (!region || e.region===region) && (!t || e.type===t) && matches(e, q) && (!showFavoritesOnly || favs.has(entryKey(e)))
+      ));
+    }
+
+    function current(){ return filtered(); }
+
+    function shuffle(arr){ for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+    function randomEntry(){ const list=current(); if(list.length) alert(`“${list[Math.floor(Math.random()*list.length)].text}” — ${list[Math.floor(Math.random()*list.length)].author}`); }
+
+    function exportFavorites() {
+      const favs = getFavorites();
+      const list = DATA.concat(loadLocalAdditions()).filter(e => favs.has(entryKey(e)));
+      const blob = new Blob([JSON.stringify(list, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='timeless-wisdom-favorites.json'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    // Events
+    document.addEventListener('DOMContentLoaded', ()=>{
+      buildFilters();
+      render(filtered());
+      [search, fieldSel, eraSel, regionSel, typeSel, compactToggle, notesToggle].forEach(el => el.addEventListener('input', ()=>render(filtered())));
+      $('#shuffleBtn').addEventListener('click', ()=>{ const list = filtered(); render(shuffle(list)); });
+      $('#randomBtn').addEventListener('click', randomEntry);
+      $('#exportBtn').addEventListener('click', exportFavorites);
+      favoritesToggle.addEventListener('click', ()=>{ showFavoritesOnly = !showFavoritesOnly; favoritesToggle.classList.toggle('bg-yellow-100', showFavoritesOnly); render(filtered()); });
+
+      // Add form
+      const addForm = document.getElementById('addForm');
+      addForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const entry = {
+          text: document.getElementById('f_text').value.trim(),
+          author: document.getElementById('f_author').value.trim(),
+          era: document.getElementById('f_era').value.trim() || 'Unspecified',
+          region: document.getElementById('f_region').value.trim() || 'Unspecified',
+          field: (document.getElementById('f_field').value.trim() || '').split(',').map(s=>s.trim()).filter(Boolean),
+          type: document.getElementById('f_type').value,
+          source: document.getElementById('f_source').value.trim(),
+          note: document.getElementById('f_note').value.trim()
+        };
+        if (!entry.text || !entry.author) return;
+        saveLocalAddition(entry);
+        buildFilters();
+        render(filtered());
+        addForm.reset();
+        alert('Added locally. To publish for everyone, edit the DATA array in index.html and commit to GitHub.');
+      });
+    });
+  </script>
+</body>
+</html>
